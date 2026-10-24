@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nutrition guru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f6ee; --surface:#ffffff; --ink:#1d2a20; --muted:#5b6b5f; --line:#d5dfd0;
+  --leaf:#2d5c3a; --beet:#8a2552; --beet-soft:#f3dde7; --leaf-soft:#dfeadb;
+  --head:"Bricolage Grotesque",system-ui,sans-serif; --body:"Literata",Georgia,serif;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121a14; --surface:#1a251d; --ink:#e8f0e4; --muted:#9fb0a2; --line:#2c3b30;
+    --leaf:#8cc79a; --beet:#f08fb7; --beet-soft:#3a1f2c; --leaf-soft:#24352a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121a14; --surface:#1a251d; --ink:#e8f0e4; --muted:#9fb0a2; --line:#2c3b30;
+  --leaf:#8cc79a; --beet:#f08fb7; --beet-soft:#3a1f2c; --leaf-soft:#24352a; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.7 var(--body)}
+a{color:var(--beet)}
+:focus-visible{outline:3px solid var(--beet);outline-offset:2px;border-radius:4px}
+.wrap{max-width:62rem;margin:0 auto;padding:0 1.25rem}
+header.site{border-bottom:1px solid var(--line)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 2rem;padding:1rem 0}
+.brand{font:800 1.6rem/1 var(--head);letter-spacing:-.02em;color:var(--leaf);text-decoration:none}
+.brand b{color:var(--beet);font-weight:800}
+nav.main{display:flex;gap:.25rem;flex-wrap:wrap}
+nav.main a{font:500 1rem var(--head);text-decoration:none;color:var(--ink);padding:.45rem .9rem;border-radius:999px}
+nav.main a[aria-current="page"]{background:var(--leaf);color:var(--bg)}
+nav.main a:hover:not([aria-current="page"]){background:var(--leaf-soft)}
+.intro{padding:2.75rem 0 1.5rem}
+.intro h1{font:800 clamp(2.2rem,6vw,3.8rem)/1.05 var(--head);letter-spacing:-.03em;margin:0 0 .75rem;max-width:18ch}
+.intro p{margin:0;max-width:44rem;color:var(--muted);font-size:1.15rem}
+section.view{display:none;padding-bottom:4rem}
+section.view.on{display:block}
+h2{font:700 1.7rem/1.2 var(--head);letter-spacing:-.01em;margin:1.5rem 0 1rem}
+/* Tabs */
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0 1.5rem;border-bottom:2px solid var(--line);padding-bottom:.6rem}
+.tabs button{font:500 .98rem var(--head);background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:999px;padding:.4rem 1rem;cursor:pointer}
+.tabs button:hover{border-color:var(--leaf)}
+.tabs button[aria-selected="true"]{background:var(--beet);border-color:var(--beet);color:#fff}
+.tabs .count{opacity:.7;margin-left:.35rem;font-size:.85em}
+/* Article list */
+.list{list-style:none;margin:0;padding:0}
+.list li{border-bottom:1px solid var(--line)}
+.list a.row{display:grid;grid-template-columns:1fr;gap:.2rem;padding:1.1rem 0;text-decoration:none;color:inherit}
+.list a.row:hover h3{text-decoration:underline;text-decoration-color:var(--beet);text-underline-offset:4px}
+.list h3{font:700 1.3rem/1.3 var(--head);margin:0}
+.list p{margin:0;color:var(--muted)}
+.meta{font:500 .85rem var(--head);color:var(--muted)}
+.chip{display:inline-block;background:var(--leaf-soft);color:var(--leaf);border-radius:6px;padding:.05rem .5rem;margin-right:.5rem}
+.empty{color:var(--muted);padding:1.5rem 0}
+/* Article */
+.back{display:inline-flex;gap:.4rem;font:500 .98rem var(--head);margin:1.25rem 1.25rem 0 0;text-decoration:none}
+.back:hover{text-decoration:underline}
+article.full{max-width:40rem;margin-top:1rem}
+article.full h1{font:800 clamp(1.9rem,4.5vw,2.7rem)/1.12 var(--head);letter-spacing:-.02em;margin:.5rem 0 .5rem}
+article.full h3{font:700 1.3rem var(--head);margin:2rem 0 .3rem}
+article.full blockquote{margin:1.5rem 0;padding:.2rem 1.1rem;border-left:4px solid var(--beet);background:var(--beet-soft);border-radius:0 8px 8px 0}
+/* Forms and cards */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.5rem}
+.grid2{display:grid;gap:1.5rem;grid-template-columns:1fr}
+@media(min-width:760px){.grid2{grid-template-columns:5fr 4fr}}
+label{display:block;font:500 .95rem var(--head);margin:0 0 .3rem}
+input,select,textarea{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.6rem .75rem}
+.field{margin-bottom:1rem}
+.two{display:grid;gap:1rem;grid-template-columns:1fr 1fr}
+.btn{font:700 1rem var(--head);background:var(--beet);color:#fff;border:0;border-radius:8px;padding:.7rem 1.4rem;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.doc{padding:1rem 0;border-bottom:1px solid var(--line)}
+.doc:last-child{border:0}
+.doc strong{font:700 1.1rem var(--head);display:block}
+.doc span{color:var(--muted);font-size:.95rem}
+.note{color:var(--muted);font-size:.92rem;margin-top:.75rem}
+.msg{margin-top:1rem;padding:.75rem 1rem;border-radius:8px;background:var(--leaf-soft);display:none}
+/* Links */
+.links{list-style:none;padding:0;margin:0;display:grid;gap:1.5rem}
+.links h3{font:700 1.15rem var(--head);margin:0 0 .5rem;color:var(--leaf)}
+.links ul{list-style:none;margin:0;padding:0}
+.links li{padding:.55rem 0;border-bottom:1px solid var(--line)}
+.links li small{display:block;color:var(--muted)}
+@media(min-width:760px){.links{grid-template-columns:1fr 1fr}}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;padding:1.5rem 0 2rem}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap bar">
+  <a class="brand" href="#articles">Nutrition <b>guru</b></a>
+  <nav class="main" aria-label="Main">
+    <a href="#articles" data-nav="articles">Articles</a>
+    <a href="#appointments" data-nav="appointments">Appointments</a>
+    <a href="#links" data-nav="links">Links</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <div class="intro">
+    <h1>Eat well, with reasons.</h1>
+    <p>Articles and practical advice on nutrition, sorted by topic.</p>
+  </div>
+
+  <!-- ARTICLES -->
+  <section class="view" id="v-articles" aria-label="Articles">
+    <div id="articleList">
+      <div class="tabs" role="tablist" id="tabs" aria-label="Article categories"></div>
+      <ul class="list" id="list"></ul>
+    </div>
+    <div id="articleView" hidden></div>
+  </section>
+
+  <!-- APPOINTMENTS -->
+  <section class="view" id="v-appointments" aria-label="Appointments">
+    <h2>Book a doctor appointment</h2>
+    <div class="grid2">
+      <div class="panel">
+        <form id="apptForm" novalidate>
+          <div class="field"><label for="f-name">Your name</label><input id="f-name" required autocomplete="name"></div>
+          <div class="two">
+            <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" required autocomplete="email"></div>
+            <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" autocomplete="tel"></div>
+          </div>
+          <div class="field"><label for="f-doc">Doctor</label><select id="f-doc"></select></div>
+          <div class="two">
+            <div class="field"><label for="f-date">Preferred date</label><input id="f-date" type="date" required></div>
+            <div class="field"><label for="f-time">Preferred time</label><input id="f-time" type="time" required></div>
+          </div>
+          <div class="field"><label for="f-note">Reason for the visit</label><textarea id="f-note" rows="3"></textarea></div>
+          <button class="btn" type="submit">Send request</button>
+          <div class="msg" id="apptMsg" role="status"></div>
+        </form>
+        <p class="note">The request opens in your email app, addressed to the clinic. Nothing is stored on this site.</p>
+      </div>
+      <div class="panel">
+        <h2 style="margin-top:0">Our doctors</h2>
+        <div id="docList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINKS -->
+  <section class="view" id="v-links" aria-label="Links">
+    <h2>Useful links</h2>
+    <ul class="links" id="linkGroups"></ul>
+  </section>
+</main>
+
+<footer><div class="wrap">Nutrition guru. General information only; it does not replace advice from your doctor.</div></footer>
+
+<script>
+/* ============ EDIT YOUR CONTENT HERE ============ */
+const CONTACT_EMAIL = "appointments@example.com";
+
+const DOCTORS = [
+  { name: "Dr. Example One", role: "Clinical dietitian", days: "Mon, Wed, Fri" },
+  { name: "Dr. Example Two", role: "Sports nutrition", days: "Tue, Thu" }
+];
+
+const LINKS = [
+  { group: "Official guidance", items: [
+    { title: "World Health Organization: Healthy diet", url: "https://www.who.int/news-room/fact-sheets/detail/healthy-diet", note: "Core recommendations" },
+    { title: "EFSA", url: "https://www.efsa.europa.eu", note: "European food safety authority" }
+  ]},
+  { group: "Tools", items: [
+    { title: "Open Food Facts", url: "https://world.openfoodfacts.org", note: "Open database of food products" }
+  ]}
+];
+
+/* Add articles here. "body" is HTML. "date" is YYYY-MM-DD. */
+const ARTICLES = [
+  { id: "hydration-basics", category: "Basics", date: "2026-10-20",
+    title: "Hydration basics: how much water do you need?",
+    summary: "A simple way to judge your needs without counting every glass.",
+    body: "<p>Needs vary with body size, climate and activity. Thirst and urine colour are good everyday guides: pale yellow usually means you are well hydrated.</p><h3>Practical tips</h3><p>Keep a bottle in sight, drink with each meal, and add more when you sweat.</p><blockquote><p>Water counts, but so do soups, fruit and vegetables.</p></blockquote>" },
+  { id: "fibre-and-gut", category: "Basics", date: "2026-10-12",
+    title: "Why fibre matters for your gut",
+    summary: "Where to find it and how to increase it comfortably.",
+    body: "<p>Fibre feeds helpful gut bacteria and supports regular digestion. Most adults eat less than recommended.</p><h3>Increase it gradually</h3><p>Add one fibre-rich food at a time, such as oats, beans or berries, and drink enough water.</p>" },
+  { id: "weekly-meal-prep", category: "Recipes", date: "2026-10-05",
+    title: "A relaxed approach to weekly meal prep",
+    summary: "Prepare components, not full meals, and stay flexible.",
+    body: "<p>Cook a grain, a protein and a tray of roasted vegetables on one day. Combine them differently through the week with fresh sauces.</p>" },
+  { id: "protein-after-training", category: "Sport", date: "2026-09-28",
+    title: "Protein after training: what the evidence says",
+    summary: "Timing matters less than your daily total.",
+    body: "<p>Spreading protein across the day works well for most people. A meal within a few hours of training is plenty.</p>" }
+];
+/* ================================================= */
+
+const $ = s => document.querySelector(s);
+const fmt = d => new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+const categories = ["All", ...new Set(ARTICLES.map(a => a.category))];
+const sorted = [...ARTICLES].sort((a, b) => b.date.localeCompare(a.date));
+
+/* Routes: #articles, #cat-<slug>, #a-<id>, #appointments, #links */
+function route() {
+  const h = (location.hash || "#articles").slice(1);
+  let view = "articles", cat = "All", art = null;
+  if (h === "appointments" || h === "links") view = h;
+  else if (h.startsWith("cat-")) { cat = categories.find(c => slug(c) === h.slice(4)) || "All"; }
+  else if (h.startsWith("a-")) { art = ARTICLES.find(a => "a-" + a.id === h) || null; }
+
+  document.querySelectorAll("section.view").forEach(s => s.classList.toggle("on", s.id === "v-" + view));
+  document.querySelectorAll("[data-nav]").forEach(a => { if (a.dataset.nav === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+
+  if (view === "articles") art ? showArticle(art) : showList(cat);
+  window.scrollTo(0, 0);
+}
+
+function showList(cat) {
+  $("#articleView").hidden = true; $("#articleList").hidden = false;
+  $("#tabs").innerHTML = categories.map(c => {
+    const n = c === "All" ? ARTICLES.length : ARTICLES.filter(a => a.category === c).length;
+    return `<button role="tab" aria-selected="${c === cat}" data-cat="${esc(c)}">${esc(c)}<span class="count">${n}</span></button>`;
+  }).join("");
+  const items = sorted.filter(a => cat === "All" || a.category === cat);
+  $("#list").innerHTML = items.length ? items.map(a => `
+    <li><a class="row" href="#a-${a.id}">
+      <span class="meta"><span class="chip">${esc(a.category)}</span>${fmt(a.date)}</span>
+      <h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p></a></li>`).join("")
+    : `<li class="empty">No articles in this category yet.</li>`;
+}
+
+function showArticle(a) {
+  $("#articleList").hidden = true;
+  const v = $("#articleView"); v.hidden = false;
+  if (!a) { v.innerHTML = `<p class="empty">This article does not exist.</p><a class="back" href="#articles">Back to all articles</a>`; return; }
+  v.innerHTML = `
+    <a class="back" href="#cat-${slug(a.category)}">&larr; Back to ${esc(a.category)}</a>
+    <a class="back" href="#articles">All articles</a>
+    <article class="full">
+      <div class="meta"><span class="chip">${esc(a.category)}</span>${fmt(a.date)}</div>
+      <h1>${esc(a.title)}</h1>${a.body}
+    </article>
+    <a class="back" href="#cat-${slug(a.category)}">&larr; Back to ${esc(a.category)}</a>`;
+}
+
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-cat]"); if (!b) return;
+  location.hash = b.dataset.cat === "All" ? "articles" : "cat-" + slug(b.dataset.cat);
+});
+
+/* Doctors + form */
+$("#f-doc").innerHTML = DOCTORS.map(d => `<option>${esc(d.name)}</option>`).join("");
+$("#docList").innerHTML = DOCTORS.map(d => `<div class="doc"><strong>${esc(d.name)}</strong><span>${esc(d.role)}. ${esc(d.days)}</span></div>`).join("");
+$("#f-date").min = new Date().toISOString().slice(0, 10);
+
+$("#apptForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const msg = $("#apptMsg"); msg.style.display = "block";
+  const v = id => $("#" + id).value.trim();
+  if (!v("f-name") || !v("f-email") || !$("#f-email").checkValidity() || !v("f-date") || !v("f-time")) {
+    msg.textContent = "Please fill in your name, a valid email, a date and a time."; return;
+  }
+  const body = `Name: ${v("f-name")}\nEmail: ${v("f-email")}\nPhone: ${v("f-phone")}\nDoctor: ${v("f-doc")}\nDate: ${v("f-date")}\nTime: ${v("f-time")}\nReason: ${v("f-note")}`;
+  location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Appointment request")}&body=${encodeURIComponent(body)}`;
+  msg.textContent = "Your email app should open with the request. Send it to confirm.";
+});
+
+/* Links */
+$("#linkGroups").innerHTML = LINKS.map(g => `<li><h3>${esc(g.group)}</h3><ul>${g.items.map(i =>
+  `<li><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a><small>${esc(i.note || "")}</small></li>`).join("")}</ul></li>`).join("");
+
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
